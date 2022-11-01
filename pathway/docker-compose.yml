@@ -1,0 +1,32 @@
+version: '3.7'
+
+services:
+  pathway_db:
+    container_name: pathway_db
+    hostname: pathway
+    image: postgres:15.0-alpine
+    restart: always
+    ports:
+      - '5433:5432'
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=pathway_db
+      - POSTGRES_HOST=pathway
+    volumes: 
+      - pathway_data:/var/lib/postgresql/data
+
+  pathway_service:
+    container_name: pathway_service
+    image: pathway_service
+    ports:
+      - "4002:4002"
+    restart: always
+    env_file:
+      - .env
+    build:
+        context: ..
+        args:
+            BIN: pathway
+    depends_on:
+      - pathway_db

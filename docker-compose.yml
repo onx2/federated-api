@@ -1,0 +1,39 @@
+version: '3.7'
+
+services:
+  # User Service
+  user_db:
+    extends:
+      file: ./user/docker-compose.yml
+      service: user_db
+    networks:
+      - backend
+  user_service:
+    extends:
+      file: ./user/docker-compose.yml
+      service: user_service
+    networks:
+      - backend
+
+  # Pathway Service
+  pathway_db:
+    extends:
+      file: ./pathway/docker-compose.yml
+      service: pathway_db
+    networks:
+      - backend
+  pathway_service:
+    extends:
+      file: ./pathway/docker-compose.yml
+      service: pathway_service
+    networks:
+      - backend
+
+# Shared config
+networks:
+  backend:
+     driver: bridge
+
+volumes:
+  user_data:
+  pathway_data:

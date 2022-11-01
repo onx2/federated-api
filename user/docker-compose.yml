@@ -1,0 +1,32 @@
+version: '3.7'
+
+services:
+  user_db:
+    container_name: user_db
+    hostname: user
+    image: postgres:15.0-alpine
+    restart: always
+    ports:
+      - '5432:5432'
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=user_db
+      - POSTGRES_HOST=user
+    volumes: 
+      - user_data:/var/lib/postgresql/data
+
+  user_service:
+    container_name: user_service
+    image: user_service
+    ports:
+      - "4001:4001"
+    restart: always
+    env_file:
+      - .env
+    build:
+        context: ..
+        args:
+            BIN: user
+    depends_on:
+      - user_db
