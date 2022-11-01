@@ -15,3 +15,5 @@ This repo serves as an example of how to use cargo workspaces with docker to run
 - Apollo federation / graphql
 - Logging / tracing
 - CI / CD
+- Testing
+- Seeding
