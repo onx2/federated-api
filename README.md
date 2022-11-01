@@ -1,6 +1,6 @@
 # federated-api
 
-This repo serves as an example of how to use cargo workspaces with docker to run microservices.
+This repo serves as an example of how to use cargo workspaces with docker to run microservices. However the services can each be run directly from their subdirectories provided they supply a top-level query, mutation, or subscription. The intended workflow for this repo is that all the services can be spun up at once and then the specific one you need to work on can be run in watch mode.
 
 ## Tools and technology
 - Postgres
@@ -12,6 +12,7 @@ This repo serves as an example of how to use cargo workspaces with docker to run
 - Docker
 
 ## Todo
+- Run a specific project with `cargo watch -x run` to leverage that dev experience.
 - Apollo federation / graphql
 - Logging / tracing
 - CI / CD
