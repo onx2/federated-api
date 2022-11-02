@@ -24,6 +24,7 @@ services:
     restart: always
     environment:
       - DATABASE_URL=postgres://postgres:postgres@pathway:5432/pathway_db
+      - PORT=4002
     build:
         context: ..
         args:

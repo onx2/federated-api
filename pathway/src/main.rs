@@ -1,15 +1,17 @@
-use dotenvy::dotenv;
-use poem::{get, handler, listener::TcpListener, Route, Server, EndpointExt, web::Data, middleware::AddData};
-use std::env;
 use database::postgres::Db;
 use diesel_migrations::{embed_migrations, EmbeddedMigrations};
+use dotenvy::dotenv;
+use poem::{
+    get, handler, listener::TcpListener, middleware::AddData, web::Data, EndpointExt, Route, Server,
+};
+use std::env;
 
 #[handler]
 fn index(_db: Data<&Db>) -> String {
     "Hello from pathway service!".to_string()
 }
 
-pub const MIGRATIONS: EmbeddedMigrations = embed_migrations!("./migrations");
+pub const MIGRATIONS: EmbeddedMigrations = embed_migrations!();
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
@@ -17,13 +19,16 @@ async fn main() -> anyhow::Result<()> {
 
     let database_url =
         env::var("DATABASE_URL").expect("DATABASE_URL must be set in environment variables.");
+    let port = env::var("PORT").expect("PORT must be set in environment variables.");
+    
     let db = Db::new(&database_url)?;
 
     db.run_migrations(MIGRATIONS)?;
 
     let app = Route::new().at("/", get(index)).with(AddData::new(db));
 
-    Server::new(TcpListener::bind("0.0.0.0:4002"))
+    println!("Listening for requests on port {port}");
+    Server::new(TcpListener::bind(format!("0.0.0.0:{port}")))
         .run(app)
         .await?;
 
