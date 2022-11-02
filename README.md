@@ -27,6 +27,8 @@ You can run all services at once using docker compose. Once all of the services 
 - Docker
 
 ## Todo
+- [x] Optimized Dockerfile
+- [x] Run all services with one command
 - [x] Run a specific project with `cargo watch -x run` to leverage that dev experience.
 - [ ] Apollo federation / graphql
 - [ ] Logging / tracing
