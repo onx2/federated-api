@@ -7,7 +7,7 @@ services:
     image: postgres:15.0-alpine
     restart: always
     ports:
-      - '5433:5432'
+      - '127.0.0.1:5433:5432'
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
@@ -22,8 +22,8 @@ services:
     ports:
       - "4002:4002"
     restart: always
-    env_file:
-      - .env
+    environment:
+      - DATABASE_URL=postgres://postgres:postgres@pathway:5432/pathway_db
     build:
         context: ..
         args:
