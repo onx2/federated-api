@@ -2,6 +2,7 @@
 
 members = [
     "user",
-    "pathway"
+    "pathway",
+    "database"
 ]
 

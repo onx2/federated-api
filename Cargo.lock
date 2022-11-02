@@ -190,6 +190,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "database"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "diesel",
+ "diesel_migrations",
+]
+
+[[package]]
 name = "diesel"
 version = "2.0.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -643,7 +652,9 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "chrono",
+ "database",
  "diesel",
+ "diesel_migrations",
  "dotenvy",
  "poem",
  "serde",
@@ -1117,6 +1128,7 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "chrono",
+ "database",
  "diesel",
  "diesel_migrations",
  "dotenvy",

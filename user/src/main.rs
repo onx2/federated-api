@@ -1,12 +1,12 @@
 use chrono::{DateTime, Utc};
 use diesel::prelude::*;
 use dotenvy::dotenv;
-use poem::{get, handler, listener::TcpListener, middleware::AddData, EndpointExt, Route, Server, web::Data};
-use std::env;
-use user::{
-    database::{run_migrations, Db},
-    schema::user::dsl,
+use poem::{
+    get, handler, listener::TcpListener, middleware::AddData, web::Data, EndpointExt, Route, Server,
 };
+use std::env;
+use database::postgres::Db;
+use diesel_migrations::{embed_migrations, EmbeddedMigrations};
 use uuid::Uuid;
 
 #[derive(Queryable, Debug)]
@@ -17,16 +17,11 @@ pub struct User {
 }
 
 #[handler]
-fn index(db: Data<&Db>) -> String {
-    let pool = &mut db.connect().expect("Couldn't connect to db.");
-    
-    let results = dsl::user
-        .limit(5)
-        .load::<User>(pool)
-        .expect("Error loading users");
-
-    format!("Hello from user service!\n {:?}", results)
+fn index(_db: Data<&Db>) -> String {
+    "Hello from user service!".to_string()
 }
+
+pub const MIGRATIONS: EmbeddedMigrations = embed_migrations!("./migrations");
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
@@ -35,10 +30,8 @@ async fn main() -> anyhow::Result<()> {
     let database_url =
         env::var("DATABASE_URL").expect("DATABASE_URL must be set in environment variables.");
     let db = Db::new(&database_url)?;
-    
-    // Run migrations as part of compiled binary
-    let pool = &mut db.connect()?;
-    run_migrations(pool)?;
+
+    db.run_migrations(MIGRATIONS)?;
 
     let app = Route::new().at("/", get(index)).with(AddData::new(db));
 

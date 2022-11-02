@@ -1,26 +1,9 @@
 use anyhow::{anyhow, Result};
 use diesel::{
-    pg::{PgConnection, Pg},
+    pg::PgConnection,
     r2d2::{ConnectionManager, Pool, PooledConnection},
 };
-use diesel_migrations::{embed_migrations, EmbeddedMigrations, MigrationHarness};
-pub const MIGRATIONS: EmbeddedMigrations = embed_migrations!("./migrations");
-
-pub fn run_migrations(connection: &mut impl MigrationHarness<Pg>) -> Result<()> {
-    if connection.has_pending_migration(MIGRATIONS).unwrap_or_default() {
-        println!("Starting to run pending migrations:");
-    }
-    for migration in connection.pending_migrations(MIGRATIONS).unwrap() {
-        println!("{:?}", migration.name().to_string());
-    }
-    connection.run_pending_migrations(MIGRATIONS).expect("Failed to run pending migrations.");
-
-    if connection.has_pending_migration(MIGRATIONS).unwrap_or_default() {
-        println!("Finishing running pending migrations");
-    }
-    
-    Ok(())
-}
+use diesel_migrations::{EmbeddedMigrations, MigrationHarness};
 
 #[derive(Debug, Clone)]
 pub struct Db {
@@ -29,6 +12,7 @@ pub struct Db {
 
 impl Db {
     pub fn new(database_url: &str) -> Result<Self> {
+        println!("Creating connection pool...");
         let manager = ConnectionManager::<PgConnection>::new(database_url);
         let connection_pool = match Pool::builder().max_size(15).build(manager) {
             Ok(pool) => pool,
@@ -37,8 +21,8 @@ impl Db {
             }
         };
 
-        println!("Created database connection pool.");
-        
+        println!("Successfully created connection pool");
+
         Ok(Db { connection_pool })
     }
 
@@ -53,7 +37,17 @@ impl Db {
     }
 
     /// Retrieves a clone of the Db connection_pool
-    fn get_pool(&self) -> Pool<ConnectionManager<PgConnection>> {
+    pub fn get_pool(&self) -> Pool<ConnectionManager<PgConnection>> {
         self.connection_pool.clone()
+    }
+
+    pub fn run_migrations(&self, migrations: EmbeddedMigrations) -> Result<()> {
+        let connection = &mut self.connect()?;
+
+        connection
+            .run_pending_migrations(migrations)
+            .map_err(|e| anyhow!(e))?;
+
+        Ok(())
     }
 }
