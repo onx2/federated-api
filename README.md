@@ -1,6 +1,8 @@
 # federated-api
 
-This repo serves as an example of how to use cargo workspaces with docker to run microservices. However the services can each be run directly from their subdirectories provided they supply a top-level query, mutation, or subscription. The intended workflow for this repo is that all the services can be spun up at once and then the specific one you need to work on can be run in watch mode.
+This repo serves as an example of how to use cargo workspaces with docker to run microservices. The intended workflow is to spin up all services within docker except one which will be run in watch mode locally.
+
+GraphQL Services can each be run directly / standalone from their subdirectories provided they supply a top-level query, mutation, or subscription.
 
 ## Installation
 - [Docker](https://www.docker.com/products/docker-desktop/)
