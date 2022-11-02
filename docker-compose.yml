@@ -32,7 +32,7 @@ services:
 # Shared config
 networks:
   backend:
-     driver: bridge
+    #  driver: bridge
 
 volumes:
   user_data:
